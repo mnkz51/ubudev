@@ -1,2 +1,2 @@
-# ubu-dev
+# ubudev
 Ubuntu for development

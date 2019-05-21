@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  ubudev:
+    build:
+      context: ./docker
+    image: ubudev:19.04
+    hostname: ubudev-1904
+    ports:
+      - "14022:22"
