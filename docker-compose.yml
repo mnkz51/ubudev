@@ -1,9 +1,16 @@
 version: "3.7"
 services:
   ubudev:
+    image: ubudev/server:19.04
     build:
       context: ./docker
-    image: ubudev:19.04
     hostname: ubudev-1904
     ports:
       - "14022:22"
+      - "15900:5900"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "~/.ssh/id_rsa:/home/mine/.ssh/id_rsa"
+      - "~/Workspace:/home/mine/Workspace"
+    env_file:
+      - server.env

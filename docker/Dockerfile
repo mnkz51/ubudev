@@ -2,9 +2,17 @@
 
 FROM buildpack-deps:19.04
 
+# for SSH
 EXPOSE 22
 
+# for VNC
+EXPOSE 5900
+
 CMD ["/usr/sbin/sshd", "-D"]
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# SSH & Sudoers
 
 RUN set -ex; \
         apt-get update; \
@@ -16,13 +24,14 @@ RUN set -ex; \
         rm -rf /var/lib/apt/lists/*
 
 ENV USER mine
-ENV HOME /home/mine
+ENV HOME /home/${USER}
 ENV SHELL /bin/bash
 
 RUN set -ex; \
         mkdir /var/run/sshd; \
         groupadd -g 510 wheel; \
-        useradd -d ${HOME} -m -s ${SHELL} -p "$(pwgen -1s 16)" ${USER}; \
+        useradd -d ${HOME} -m -s ${SHELL} ${USER}; \
+        echo "${USER}:$(pwgen -1s 16)" | chpasswd; \
         gpasswd -a ${USER} wheel
 
 COPY ./sudoers.d/wheel /etc/sudoers.d/wheel
@@ -33,6 +42,63 @@ RUN set -ex; \
         chmod 700 ${HOME}/.ssh; \
         chmod 600 ${HOME}/.ssh/authorized_keys
 
+# Timezone & Locale
+
+ENV TZ Etc/UTC
+ENV LANG_WHICH en
+ENV LANG_WHERE US
+ENV ENCODING UTF-8
+ENV LANGUAGE ${LANG_WHICH}_${LANG_WHERE}.${ENCODING}
+ENV LANG ${LANGUAGE}
+
+RUN set -ex; \
+        apt-get update; \
+        apt-get install -y --no-install-recommends \
+                tzdata \
+                language-pack-en \
+                language-pack-ja \
+                locales \
+        ; \
+        echo "${TZ}" > /etc/timezone; \
+        dpkg-reconfigure --frontend noninteractive tzdata; \
+        locale-gen ${LANGUAGE}; \
+        dpkg-reconfigure --frontend noninteractive locales; \
+        rm -rf /var/lib/apt/lists/*
+
+# X & VNC
+
+RUN set -ex; \
+        apt-get update; \
+        apt-get install -y --no-install-recommends \
+                xvfb \
+                fluxbox \
+                x11vnc \
+        ; \
+        rm -rf /var/lib/apt/lists/*
+
+# Docker & Compose
+
+RUN set -ex; \
+        apt-get update; \
+        apt-get install -y --no-install-recommends \
+                software-properties-common \
+        ; \
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -; \
+        add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu disco stable edge test"; \
+        apt-get update; \
+        apt-get install -y --no-install-recommends \
+                docker-ce \
+                docker-ce-cli \
+                containerd.io \
+        ; \
+        curl -L \
+                "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" \
+                -o /usr/local/bin/docker-compose; \
+        chmod +x /usr/local/bin/docker-compose; \
+        rm -rf /var/lib/apt/lists/*
+
+# Development
+
 USER ${USER}
 WORKDIR ${HOME}
 
@@ -40,6 +106,7 @@ RUN set -ex; \
         sudo apt-get update; \
         sudo apt-get install -y --no-install-recommends \
                 vim \
+                bash-completion \
         ; \
         sudo rm -rf /var/lib/apt/lists/*
 
@@ -49,6 +116,7 @@ RUN set -ex; \
         ln -s .dotfiles/.bashrc; \
         ln -s .dotfiles/.bash_profile; \
         ln -s .dotfiles/.dircolors; \
+        ln -s .dotfiles/.gitconfig; \
         mkdir -p .vim/backup .vim/swap; \
         cp -pr .dotfiles/.vim/autoload .vim/.; \
         ln -s .dotfiles/.vimrc; \
@@ -59,5 +127,6 @@ RUN set -ex; \
         ./.anyenv/bin/anyenv install --force-init
 
 USER root
+WORKDIR /
 
 # END
