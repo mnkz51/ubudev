@@ -12,18 +12,24 @@ ssh-rsa xxxxxx== xxxx
 
 上記ファイルを自分の信頼するキーに修正する
 
-### 2. docker image 作成 & 起動
+### 2. ユーザ名の変更
+
+ユーザ名を変更したい場合は `docker/Dockerfile` の `USER` と `docker-compose.yml` を修正する
+
+### 3. docker image 作成 & 起動
 
 ```
 $ docker-compose build
 $ docker-compose up -d
 ```
 
-### 3. ssh して接続する
+### 4. ブラウザから `code-server` に接続する
 
 ```
-$ ssh -p 14022 mine@localhost
+https://localhost:18443/
 ```
 
-* ユーザ名を変更したい場合は `docker/Dockerfile` の `USER` を修正する
+### 5. その他
+
+* code-server 接続時のパスワードは `server.env` の `PASSWORD` に設定する
 * 接続ポートを変更したい場合は `docker-compose.yml` の `ports` を修正する

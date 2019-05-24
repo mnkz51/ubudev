@@ -30,7 +30,7 @@ COPY ./sudoers.d/wheel /etc/sudoers.d/wheel
 COPY ./ssh/authorized_keys ${HOME}/.ssh/authorized_keys
 
 RUN set -ex; \
-        chown -R mine: ${HOME}/.ssh; \
+        chown -R ${USER}: ${HOME}/.ssh; \
         chmod 700 ${HOME}/.ssh; \
         chmod 600 ${HOME}/.ssh/authorized_keys
 
@@ -111,7 +111,7 @@ RUN set -ex; \
         curl -fsSL \
             "https://github.com/cdr/code-server/releases/download/${CODER_VER}/code-server${CODER_VER}-linux-x64.tar.gz" | tar -zx -C bin/ --strip=1 "code-server${CODER_VER}-linux-x64/code-server"
 
-CMD [ "/home/mine/bin/code-server", "--cert", "etc/code-server.pem", "--cert-key", "etc/code-server-key.pem" ]
+CMD [ "bin/code-server", "--cert", "etc/code-server.pem", "--cert-key", "etc/code-server-key.pem" ]
 
 # Develop
 

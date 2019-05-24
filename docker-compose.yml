@@ -10,6 +10,7 @@ services:
       - "18443:8443"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "~/.local/share/code-server:/home/mine/.local/share/code-server"
       - "~/.ssh/id_rsa:/home/mine/.ssh/id_rsa"
       - "~/Workspace:/home/mine/Workspace"
     env_file:
