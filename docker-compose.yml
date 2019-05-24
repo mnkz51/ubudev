@@ -8,6 +8,7 @@ services:
     ports:
       - "14022:22"
       - "15900:5900"
+      - "18443:8443"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "~/.ssh/id_rsa:/home/mine/.ssh/id_rsa"
