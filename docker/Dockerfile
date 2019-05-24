@@ -107,6 +107,8 @@ RUN set -ex; \
         sudo apt-get install -y --no-install-recommends \
                 vim \
                 bash-completion \
+                ack \
+                jq \
         ; \
         sudo rm -rf /var/lib/apt/lists/*
 
@@ -124,7 +126,12 @@ RUN set -ex; \
 
 RUN set -ex; \
         git clone https://github.com/anyenv/anyenv .anyenv; \
-        ./.anyenv/bin/anyenv install --force-init
+        ./.anyenv/bin/anyenv install --force-init; \
+        exec $SHELL -l; \
+        anyenv install goenv; \
+        anyenv install nodeenv; \
+        anyenv install rbenv; \
+        exec $SHELL -l
 
 USER root
 WORKDIR /
