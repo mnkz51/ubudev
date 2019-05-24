@@ -6,7 +6,6 @@ services:
       context: ./docker
     hostname: ubudev-1904
     ports:
-      - "14022:22"
       - "15900:5900"
       - "18443:8443"
     volumes:

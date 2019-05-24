@@ -2,14 +2,6 @@
 
 FROM buildpack-deps:19.04
 
-# for SSH
-EXPOSE 22
-
-# for VNC
-EXPOSE 5900
-
-CMD ["/usr/sbin/sshd", "-D"]
-
 ENV DEBIAN_FRONTEND=noninteractive
 
 # SSH & Sudoers
@@ -67,6 +59,8 @@ RUN set -ex; \
 
 # X & VNC
 
+EXPOSE 5900
+
 RUN set -ex; \
         apt-get update; \
         apt-get install -y --no-install-recommends \
@@ -91,16 +85,35 @@ RUN set -ex; \
                 docker-ce-cli \
                 containerd.io \
         ; \
-        curl -L \
+        curl -fsSL \
                 "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" \
                 -o /usr/local/bin/docker-compose; \
         chmod +x /usr/local/bin/docker-compose; \
         rm -rf /var/lib/apt/lists/*
 
-# Development
+# Developer
 
 USER ${USER}
 WORKDIR ${HOME}
+
+# Coder
+
+EXPOSE 8443
+
+ENV CODER_VER 1.1119-vsc1.33.1
+
+COPY ./etc/code-server-key.pem etc/code-server-key.pem
+COPY ./etc/code-server.pem etc/code-server.pem
+
+RUN set -ex; \
+        sudo chown -R ${USER}: etc; \
+        mkdir bin; \
+        curl -fsSL \
+            "https://github.com/cdr/code-server/releases/download/${CODER_VER}/code-server${CODER_VER}-linux-x64.tar.gz" | tar -zx -C bin/ --strip=1 "code-server${CODER_VER}-linux-x64/code-server"
+
+CMD [ "/home/mine/bin/code-server", "--cert", "etc/code-server.pem", "--cert-key", "etc/code-server-key.pem" ]
+
+# Develop
 
 RUN set -ex; \
         sudo apt-get update; \
@@ -132,9 +145,7 @@ RUN [ "/bin/bash", "-l", "-c", " \
         anyenv install goenv \
         && anyenv install nodenv \
         && anyenv install rbenv \
+        && anyenv install pyenv \
     " ]
-
-USER root
-WORKDIR /
 
 # END
