@@ -126,12 +126,13 @@ RUN set -ex; \
 
 RUN set -ex; \
         git clone https://github.com/anyenv/anyenv .anyenv; \
-        ./.anyenv/bin/anyenv install --force-init; \
-        exec $SHELL -l; \
-        anyenv install goenv; \
-        anyenv install nodeenv; \
-        anyenv install rbenv; \
-        exec $SHELL -l
+        ./.anyenv/bin/anyenv install --force-init
+
+RUN [ "/bin/bash", "-l", "-c", " \
+        anyenv install goenv \
+        && anyenv install nodenv \
+        && anyenv install rbenv \
+    " ]
 
 USER root
 WORKDIR /
