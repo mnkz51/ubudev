@@ -23,7 +23,7 @@ $ docker-compose build
 $ docker-compose up -d
 ```
 
-### 4. ブラウザから `code-server` に接続する
+### 4. ブラウザから [code-server][1] に接続する
 
 ```
 https://localhost:18443/
@@ -33,6 +33,7 @@ https://localhost:18443/
 
 * code-server 接続時のパスワードは `server.env` の `PASSWORD` に設定する
 * 接続ポートを変更したい場合は `docker-compose.yml` の `ports` を修正する
-* SSL の証明書は [mkcert][1] を導入するなどして、`etc` 配下に同名のファイルを作成する
+* SSL の証明書は [mkcert][2] を導入するなどして、`etc` 配下に同名のファイルを作成する
 
-[1]: https://github.com/FiloSottile/mkcert
+[1]: https://github.com/cdr/code-server
+[2]: https://github.com/FiloSottile/mkcert
