@@ -57,19 +57,6 @@ RUN set -ex; \
         dpkg-reconfigure --frontend noninteractive locales; \
         rm -rf /var/lib/apt/lists/*
 
-# X & VNC
-
-EXPOSE 5900
-
-RUN set -ex; \
-        apt-get update; \
-        apt-get install -y --no-install-recommends \
-                xvfb \
-                fluxbox \
-                x11vnc \
-        ; \
-        rm -rf /var/lib/apt/lists/*
-
 # Docker & Compose
 
 RUN set -ex; \
@@ -91,6 +78,19 @@ RUN set -ex; \
         chmod +x /usr/local/bin/docker-compose; \
         rm -rf /var/lib/apt/lists/*
 
+# AWS CLI (& Python)
+
+RUN set -ex; \
+        apt-get update; \
+        apt-get install -y --no-install-recommends \
+                python3-dev \
+                python3-setuptools \
+                python3-pip \
+        ; \
+        pip3 install --upgrade pip; \
+        pip3 install awscli --upgrade; \
+        rm -rf /var/lib/apt/lists/*
+
 # Developer
 
 USER ${USER}
@@ -101,6 +101,8 @@ WORKDIR ${HOME}
 EXPOSE 8443
 
 ENV CODER_VER 1.1119-vsc1.33.1
+ENV CODER_DIR code-server${CODER_VER}-linux-x64
+ENV CODER_URL https://github.com/cdr/code-server/releases/download/${CODER_VER}/${CODER_DIR}.tar.gz
 
 COPY ./etc/code-server-key.pem etc/code-server-key.pem
 COPY ./etc/code-server.pem etc/code-server.pem
@@ -108,12 +110,12 @@ COPY ./etc/code-server.pem etc/code-server.pem
 RUN set -ex; \
         sudo chown -R ${USER}: etc; \
         mkdir bin; \
-        curl -fsSL \
-            "https://github.com/cdr/code-server/releases/download/${CODER_VER}/code-server${CODER_VER}-linux-x64.tar.gz" | tar -zx -C bin/ --strip=1 "code-server${CODER_VER}-linux-x64/code-server"
+        mkdir -p .local/share/code-server; \
+        curl -fsSL ${CODER_URL} | tar -zx -C bin/ --strip=1 "${CODER_DIR}/code-server"
 
 CMD [ "bin/code-server", "--cert", "etc/code-server.pem", "--cert-key", "etc/code-server-key.pem" ]
 
-# Develop
+# Vim & Dotfiles
 
 RUN set -ex; \
         sudo apt-get update; \
@@ -126,6 +128,7 @@ RUN set -ex; \
         sudo rm -rf /var/lib/apt/lists/*
 
 RUN set -ex; \
+        mkdir works; \
         git clone https://github.com/mnkz51/dotfiles .dotfiles; \
         mv -i .bashrc .bashrc.disco-org; \
         ln -s .dotfiles/.bashrc; \
@@ -136,16 +139,5 @@ RUN set -ex; \
         cp -pr .dotfiles/.vim/autoload .vim/.; \
         ln -s .dotfiles/.vimrc; \
         echo "" | vim --not-a-term -c PlugInstall -c q -c q > /dev/null
-
-RUN set -ex; \
-        git clone https://github.com/anyenv/anyenv .anyenv; \
-        ./.anyenv/bin/anyenv install --force-init
-
-RUN [ "/bin/bash", "-l", "-c", " \
-        anyenv install goenv \
-        && anyenv install nodenv \
-        && anyenv install rbenv \
-        && anyenv install pyenv \
-    " ]
 
 # END
