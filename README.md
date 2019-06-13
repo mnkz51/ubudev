@@ -26,7 +26,7 @@ $ docker-compose up -d
 ### 4. ブラウザから [code-server][1] に接続する
 
 ```
-https://localhost:443/
+https://localhost/
 ```
 
 ### 5. その他の設定
