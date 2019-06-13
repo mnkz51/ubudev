@@ -6,7 +6,7 @@ volumes:
     external: true
 services:
   volume-backup:
-    image: ubudev/vbackup:latest
+    image: ubudev/volume-backup:latest
     build:
       context: ./docker/volume-backup
     volumes:
