@@ -1,17 +1,15 @@
 version: "3"
 volumes:
-  ubudev_coder:
-    external: true
   ubudev_code-server:
     external: true
-#  works:
-#    driver: local
+  ubudev_works:
+    external: true
 services:
   volume-backup:
     image: ubudev/vbackup:latest
     build:
       context: ./docker/volume-backup
     volumes:
-      - "ubudev_coder:/volume/code-server"
-      - "./backup:/backup2"
-        #      - "works:/volume/works"
+      - "ubudev_code-server:/volume/code-server"
+      - "ubudev_works:/volume/works"
+      - "./backup:/backup"
