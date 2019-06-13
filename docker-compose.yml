@@ -1,21 +1,21 @@
 version: "3"
 volumes:
-  coder:
+  code-server:
     driver: local
   works:
     driver: local
 services:
-  coder:
-    image: ubudev/server:19.04
+  code-server:
+    image: ubudev/code-server:19.04
     build:
-      context: ./docker
+      context: ./docker/code-server
     hostname: ubudev-1904
     ports:
       - "443:8443"
     volumes:
       - "~/.ssh/id_rsa:/home/mine/.ssh/id_rsa"
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "coder:/home/mine/.local/share/code-server"
+      - "code-server:/home/mine/.local/share/code-server"
       - "works:/home/mine/works"
     env_file:
       - server.env
