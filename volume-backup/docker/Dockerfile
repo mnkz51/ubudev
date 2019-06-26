@@ -6,6 +6,8 @@ RUN apk update && apk add --no-cache dumb-init
 
 COPY backup.sh /
 
-ENTRYPOINT [ "/bin/sh", "/backup.sh" ]
+ENTRYPOINT [ "/usr/bin/dumb-init", "--" ]
+
+CMD [ "/bin/sh" ]
 
 # END
