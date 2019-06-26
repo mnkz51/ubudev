@@ -47,7 +47,7 @@ volume-backup$ docker-compose build
 ### 2. バックアップ
 
 ```
-volume-backup$ docker-compose run --rm app ./backup.sh backup
+volume-backup$ docker-compose run --rm save ./backup.sh backup
 ```
 
 `backup` ディレクトリ内の日時フォルダ内に volume 配下のディレクトリごとの圧縮ファイルが作成される
@@ -55,7 +55,7 @@ volume-backup$ docker-compose run --rm app ./backup.sh backup
 ### 3. リストア
 
 ```
-volume-backup$ docker-compose run --rm app ./backup.sh restore [archive_file]
+volume-backup$ docker-compose run --rm save ./backup.sh restore [archive_file]
 ```
 
 `archive_file` には `backup` ディレクトリからの相対指定 (ex. `20190102-150405/works.tar.bz2` )

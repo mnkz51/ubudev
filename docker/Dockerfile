@@ -9,6 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN set -ex; \
         apt-get update; \
         apt-get install -y --no-install-recommends \
+                dumb-init \
                 openssh-server \
                 sudo \
                 pwgen \
@@ -117,7 +118,30 @@ RUN set -ex; \
         mkdir -p .local/share/code-server; \
         curl -fsSL ${CODER_URL} | tar -zx -C bin/ --strip=1 "${CODER_DIR}/code-server"
 
+ENTRYPOINT [ "/usr/bin/dumb-init", "--" ]
+
 CMD [ "bin/code-server", "--cert", "etc/code-server.pem", "--cert-key", "etc/code-server-key.pem" ]
+
+# Anyenv
+
+RUN set -ex; \
+        git clone https://github.com/anyenv/anyenv .anyenv; \
+        ./.anyenv/bin/anyenv install --force-init
+
+ENV PATH $HOME/.anyenv/bin:$PATH
+
+RUN set -ex; \
+        anyenv install goenv; \
+        anyenv install nodenv; \
+        anyenv install rbenv; \
+        anyenv install pyenv; \
+        anyenv init 2> $HOME/.bash_profile || true
+
+RUN [ "/bin/bash", "-l", "-c", "\
+        goenv install 1.12.6 \
+    " ]
+
+RUN rm $HOME/.bash_profile
 
 # Vim & Dotfiles
 
@@ -128,6 +152,7 @@ RUN set -ex; \
                 bash-completion \
                 ack \
                 jq \
+                direnv \
         ; \
         sudo rm -rf /var/lib/apt/lists/*
 

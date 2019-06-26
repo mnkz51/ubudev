@@ -5,7 +5,7 @@ volumes:
   ubudev_works:
     external: true
 services:
-  app:
+  save:
     image: ubudev/volume-backup:latest
     build:
       context: ./docker
