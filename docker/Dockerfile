@@ -137,8 +137,10 @@ RUN set -ex; \
         anyenv install pyenv; \
         anyenv init 2> $HOME/.bash_profile || true
 
-RUN [ "/bin/bash", "-l", "-c", "\
+RUN [ "/bin/bash", "-l", "-c", " \
         goenv install 1.12.6 \
+        && goenv global 1.12.6 \
+        && go get -u golang.org/x/tools/cmd/gopls \
     " ]
 
 RUN rm $HOME/.bash_profile
