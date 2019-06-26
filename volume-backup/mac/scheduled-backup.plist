@@ -5,7 +5,7 @@
 	<key>Label</key>
 	<string>com.github.mnkz51.ubudev.scheduled-backup</string>
 	<key>WorkingDirectory</key>
-	<string>/Users/mine/ubudev</string>
+    <string>/Users/mine/ubudev/volume-backup</string>
 	<key>EnvironmentVariables</key>
 	<dict>
 		<key>PATH</key>
@@ -15,7 +15,7 @@
 	<array>
 		<string>/bin/sh</string>
 		<string>-c</string>
-		<string>docker-compose -f docker-compose.yml -f docker-compose.volume-backup.yml run --rm volume-backup backup</string>
+		<string>docker-compose run --rm app backup</string>
 	</array>
 	<key>StartInterval</key>
 	<integer>86400</integer>

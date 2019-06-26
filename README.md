@@ -40,13 +40,14 @@ https://localhost/
 ### 1. バックアップ用 docker image 作成
 
 ```
-$ docker-compose -f docker-compose.yml -f docker-compose.volume-backup.yml build volume-backup
+$ cd volume-backup
+volume-backup$ docker-compose build app
 ```
 
 ### 2. バックアップ
 
 ```
-$ docker-compose -f docker-compose.yml -f docker-compose.volume-backup.yml run --rm volume-backup backup
+volume-backup$ docker-compose run --rm app backup
 ```
 
 `backup` ディレクトリ内の日時フォルダ内に volume 配下のディレクトリごとの圧縮ファイルが作成される
@@ -54,7 +55,7 @@ $ docker-compose -f docker-compose.yml -f docker-compose.volume-backup.yml run -
 ### 3. リストア
 
 ```
-$ docker-compose -f docker-compose.yml -f docker-compose.volume-backup.yml run --rm volume-backup restore [archive_file]
+volume-backup$ docker-compose run --rm app restore [archive_file]
 ```
 
 `archive_file` には `backup` ディレクトリからの相対指定 (ex. `20190102-150405/works.tar.bz2` )

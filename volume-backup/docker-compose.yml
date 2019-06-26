@@ -5,10 +5,10 @@ volumes:
   ubudev_works:
     external: true
 services:
-  volume-backup:
+  app:
     image: ubudev/volume-backup:latest
     build:
-      context: ./docker/volume-backup
+      context: ./docker
     volumes:
       - "ubudev_code-server:/volume/code-server"
       - "ubudev_works:/volume/works"

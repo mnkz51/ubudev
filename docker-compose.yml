@@ -5,10 +5,10 @@ volumes:
   works:
     driver: local
 services:
-  code-server:
+  app:
     image: ubudev/code-server:19.04
     build:
-      context: ./docker/code-server
+      context: ./docker
     hostname: ubudev-1904
     ports:
       - "443:8443"
