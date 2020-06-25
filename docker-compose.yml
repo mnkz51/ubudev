@@ -6,10 +6,10 @@ volumes:
     driver: local
 services:
   app:
-    image: ubudev/code-server:19.04
+    image: ubudev/code-server:20.04
     build:
       context: ./docker
-    hostname: ubudev-1904
+    hostname: ubudev-2004
     ports:
       - "443:8443"
     volumes:

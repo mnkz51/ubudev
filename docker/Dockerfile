@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.0-experimental
 
-FROM buildpack-deps:19.04
+FROM buildpack-deps:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -105,18 +105,21 @@ WORKDIR ${HOME}
 
 EXPOSE 8443
 
-ENV CODER_VER 1.1119-vsc1.33.1
-ENV CODER_DIR code-server${CODER_VER}-linux-x64
-ENV CODER_URL https://github.com/cdr/code-server/releases/download/${CODER_VER}/${CODER_DIR}.tar.gz
+ENV CODER_VER 3.4.1
+ENV CODER_DIR code-server-${CODER_VER}-linux-amd64
+ENV CODER_URL https://github.com/cdr/code-server/releases/download/v${CODER_VER}/${CODER_DIR}.tar.gz
 
 COPY ./etc/code-server-key.pem etc/code-server-key.pem
 COPY ./etc/code-server.pem etc/code-server.pem
+COPY ./config/code-server.yaml .config/code-server/config.yaml
 
 RUN set -ex; \
-        sudo chown -R ${USER}: etc; \
-        mkdir bin; \
+        sudo chown -R ${USER}: etc .config; \
+        mkdir bin lib; \
         mkdir -p .local/share/code-server; \
-        curl -fsSL ${CODER_URL} | tar -zx -C bin/ --strip=1 "${CODER_DIR}/code-server"
+        curl -fsSL ${CODER_URL} | tar -zx -C lib/; \
+        mv lib/${CODER_DIR} lib/code-server-${CODER_VER}; \
+        ln -s ${HOME}/lib/code-server-${CODER_VER}/bin/code-server bin/code-server
 
 ENTRYPOINT [ "/usr/bin/dumb-init", "--" ]
 
@@ -138,9 +141,10 @@ RUN set -ex; \
         anyenv init 2> $HOME/.bash_profile || true
 
 RUN [ "/bin/bash", "-l", "-c", " \
-        goenv install 1.12.6 \
-        && goenv global 1.12.6 \
-        && go get -u golang.org/x/tools/cmd/gopls \
+        goenv install 1.14.4 \
+        && goenv global 1.14.4 \
+        && go get -u golang.org/x/tools/gopls \
+        && go clean -cache \
     " ]
 
 RUN rm $HOME/.bash_profile
