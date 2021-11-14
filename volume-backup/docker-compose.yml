@@ -1,7 +1,5 @@
 version: "3"
 volumes:
-  ubudev_code-server:
-    external: true
   ubudev_works:
     external: true
 services:
@@ -10,6 +8,5 @@ services:
     build:
       context: ./docker
     volumes:
-      - "ubudev_code-server:/volume/code-server"
       - "ubudev_works:/volume/works"
       - "./backup:/backup"

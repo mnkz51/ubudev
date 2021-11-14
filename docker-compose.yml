@@ -1,21 +1,18 @@
 version: "3"
 volumes:
-  code-server:
-    driver: local
   works:
     driver: local
 services:
   app:
-    image: ubudev/code-server:20.04
+    image: ubudev:20.04
     build:
       context: ./docker
     hostname: ubudev-2004
-    ports:
-      - "443:8443"
     volumes:
       - "~/.ssh/id_rsa:/home/mine/.ssh/id_rsa"
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "code-server:/home/mine/.local/share/code-server"
       - "works:/home/mine/works"
     env_file:
       - server.env
+    command: [ "tail", "-f", "/dev/null" ]
+    init: true
