@@ -29,7 +29,7 @@ RUN set -ex; \
 COPY ./sudoers.d/wheel /etc/sudoers.d/wheel
 
 RUN set -ex; \
-    groupadd -g 11 wheel
+    groupadd -g 11 wheel; \
     gpasswd -a ${USER} wheel
 
 # Timezone & Locale
