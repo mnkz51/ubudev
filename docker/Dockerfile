@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.0-experimental
 
-FROM buildpack-deps:20.04
+FROM buildpack-deps:22.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -26,16 +26,13 @@ RUN set -ex; \
     echo "${USER}:$(pwgen -1s 16)" | chpasswd; \
     rm -rf /var/lib/apt/lists/*
 
+COPY ./sudoers.d/wheel /etc/sudoers.d/wheel
+
+RUN set -ex; \
+    groupadd -g 11 wheel
+    gpasswd -a ${USER} wheel
+
 # Timezone & Locale
-
-ENV TZ Etc/UTC
-
-ARG LANG_WHICH=en
-ARG LANG_WHERE=US
-ARG ENCODING=UTF-8
-ARG LANGUAGE=${LANG_WHICH}_${LANG_WHERE}.${ENCODING}
-
-ENV LANG ${LANGUAGE}
 
 RUN set -ex; \
     apt-get update; \
@@ -46,6 +43,15 @@ RUN set -ex; \
         locales \
     ; \
     rm -rf /var/lib/apt/lists/*
+
+ENV TZ Etc/UTC
+
+ARG LANG_WHICH=en
+ARG LANG_WHERE=US
+ARG ENCODING=UTF-8
+ARG LANGUAGE=${LANG_WHICH}_${LANG_WHERE}.${ENCODING}
+
+ENV LANG ${LANGUAGE}
 
 # Docker
 
